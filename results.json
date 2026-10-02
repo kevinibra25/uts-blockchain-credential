@@ -1,0 +1,181 @@
+{
+ "tests": [
+  {
+   "id": "F-01",
+   "desc": "Verifikasi ijazah valid (5 field diungkap)",
+   "expected": "VALID",
+   "got": "VALID",
+   "pass": true
+  },
+  {
+   "id": "F-02",
+   "desc": "Selective disclosure: hanya gelar+prodi; IPK & NIM tidak ada di paket",
+   "expected": "VALID & tanpa bocor",
+   "got": "VALID; bocor=False",
+   "pass": true
+  },
+  {
+   "id": "F-03",
+   "desc": "Verifikasi setelah dicabut",
+   "expected": "DITOLAK (REVOKED)",
+   "got": "status kredensial: REVOKED",
+   "pass": true
+  },
+  {
+   "id": "F-04",
+   "desc": "Kredensial baru (re-issue ke DID baru) valid",
+   "expected": "VALID",
+   "got": "VALID",
+   "pass": true
+  },
+  {
+   "id": "F-05",
+   "desc": "Transisi terlarang REVOKED->ISSUED",
+   "expected": "DITOLAK",
+   "got": "transisi tidak valid: REVOKED -> REINSTATE",
+   "pass": true
+  },
+  {
+   "id": "F-06",
+   "desc": "Kredensial lama tetap valid setelah rotasi kunci penerbit",
+   "expected": "VALID",
+   "got": "VALID",
+   "pass": true
+  },
+  {
+   "id": "S-01",
+   "desc": "Pemalsuan nilai field (gelar diubah)",
+   "expected": "DITOLAK",
+   "got": "bukti Merkle field 'gelar' gagal",
+   "pass": true
+  },
+  {
+   "id": "S-02",
+   "desc": "Tanda tangan oleh kunci penyerang",
+   "expected": "DITOLAK",
+   "got": "tanda tangan tidak valid",
+   "pass": true
+  },
+  {
+   "id": "S-03",
+   "desc": "Penerbit tak terdaftar menerbitkan",
+   "expected": "DITOLAK",
+   "got": "penerbit tidak terdaftar/aktif",
+   "pass": true
+  },
+  {
+   "id": "S-04",
+   "desc": "Penerbit lain mencabut kredensial bukan miliknya",
+   "expected": "DITOLAK",
+   "got": "hanya penerbit asli yang boleh mengubah status",
+   "pass": true
+  },
+  {
+   "id": "S-05",
+   "desc": "Perubahan data di blok lama terdeteksi validasi rantai",
+   "expected": "TERDETEKSI",
+   "got": "rantai rusak di blok 4",
+   "pass": true
+  },
+  {
+   "id": "S-06",
+   "desc": "Tebak NIM dari hash: tanpa salt vs ber-salt (1000 kandidat)",
+   "expected": "tanpa salt bocor; ber-salt aman",
+   "got": "tanpa salt ditemukan=True; ber-salt ditemukan=False",
+   "pass": true
+  },
+  {
+   "id": "S-07",
+   "desc": "Commit dengan 2 dari 4 suara (n=4, f=1, butuh 3)",
+   "expected": "DITOLAK",
+   "got": "kuorum tidak tercapai",
+   "pass": true
+  },
+  {
+   "id": "S-08",
+   "desc": "Penerbit dinonaktifkan melalui governance",
+   "expected": "DITOLAK",
+   "got": "penerbit tidak aktif",
+   "pass": true
+  },
+  {
+   "id": "P-01",
+   "desc": "Performa verifikasi 300 kredensial (sandbox)",
+   "expected": ">= 25 verifikasi/detik",
+   "got": "6555.0 /detik; terbitkan 0.149 ms/kred",
+   "pass": true
+  }
+ ],
+ "perf": {
+  "N": 300,
+  "issue_ms_per_cred": 0.149,
+  "verify_ms_per_cred": 0.153,
+  "verify_throughput_per_s": 6555.0,
+  "chain_validation_s_for_302_blocks": 0.0039,
+  "all_valid": true
+ },
+ "chain": {
+  "tamper_detected_at_block": 4,
+  "blocks": [
+   {
+    "height": 0,
+    "type": "GENESIS",
+    "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "cb5ef52466728d673bf917acacd9cbf253c92ac732c9282c0cd7c5c3ccc1b053"
+   },
+   {
+    "height": 1,
+    "type": "ADD_ISSUER",
+    "prev": "cb5ef52466728d673bf917acacd9cbf253c92ac732c9282c0cd7c5c3ccc1b053",
+    "hash": "85124fc42a11b23c32f7b29e08e736fd2acff41cc51534dd06ed9893b77252b7"
+   },
+   {
+    "height": 2,
+    "type": "ISSUE",
+    "prev": "85124fc42a11b23c32f7b29e08e736fd2acff41cc51534dd06ed9893b77252b7",
+    "hash": "b0a4fa1cdc63bf6b199ddd06f8f027dcbade63c022314584d74e8c174c7b02af"
+   }
+  ],
+  "example_root": "1daf6f921579e0d16bbc61ffac437c9f1a59a4b06c892d434077b8802030a92b",
+  "example_leaves": [
+   {
+    "field": "gelar",
+    "leaf": "75193b12fa1a3528b01a12c390db432da2f0d1b9ee82b8e0275d8785032bb2ea"
+   },
+   {
+    "field": "ipk",
+    "leaf": "f7571860877e9f598eb4a3cbf86b69f4e55e67ea568de2305a33c781c4467384"
+   },
+   {
+    "field": "nama",
+    "leaf": "5745d1c1f96f8b3bda9c7d6be715132e688627b4ae20c300ba9b01b9b9f4c227"
+   },
+   {
+    "field": "nim",
+    "leaf": "b1303ff1e6c738ee6127987d7822a4d8040f70a210d9999b0c406331f3ae23a2"
+   },
+   {
+    "field": "no_ijazah",
+    "leaf": "ddc07e4b216cf41bdf9a536b9fc156c8f6da2920eca678df0da2d291aa46b136"
+   },
+   {
+    "field": "prodi",
+    "leaf": "c09cdfb3cedeaaee7e802ed43043396a8f2ad6af1caa271a12a19c454610599d"
+   },
+   {
+    "field": "tgl_lulus",
+    "leaf": "6fcebf7a3e6cf2e65429fc25327d69c60dd0bdb4bb0e519a80b5ebf5bf6017d8"
+   }
+  ],
+  "n_blocks_main": 8,
+  "avalanche": {
+   "a": "d64fe570a08fe1ba43def39f746e5b62194719e711bc844951bfb2ab3b20a4bc",
+   "b": "6601936dc23b25d5e16282cfb061b4e737eba57db65616951066163813865376",
+   "bits_diff": 129
+  }
+ },
+ "summary": {
+  "total": 15,
+  "pass": 15
+ }
+}
